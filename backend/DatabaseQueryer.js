@@ -8,6 +8,7 @@ const mysql = require('mysql2');
 module.exports = class DatabaseQueryer {
 
   static verbose = false;
+  
 
   static connect() {
     // read settings
