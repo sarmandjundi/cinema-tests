@@ -10,8 +10,11 @@ module.exports = class Acl {
     let role = req.session.user ?
       (req.session.user.userRole || 'logged in') :
       'not logged in';
+    let allowedRoles = ['not logged in', 'logged in', 'not logged in'];
+    if (!allowedRoles.includes[role]) { role = 'not logged in'; }
+
     console.log([
-      'user:' + JSON.stringify(req.session.user, '', ''),
+      'role:' + role,
       'url' + req.url,
       'table' + table,
       'method', method,
