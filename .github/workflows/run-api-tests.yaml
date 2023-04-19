@@ -38,7 +38,7 @@ jobs:
       # start mysql and change default password
       # use the password from your settings.json fil in this repo
     - run: sudo service mysql start
-    - run: mysqladmin --user=root --password=root password "rootroot"
+    - run: mysqladmin --user=root --password=root password "jagkommer3"
       # restart mysql
     - run: sudo service mysql restart
       # seed the db with initial dummy/test data
