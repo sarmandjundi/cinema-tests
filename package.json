@@ -8,6 +8,7 @@
     "start": "concurrently \"npm:backend\" \"npm:dev\"",
     "seed-db": "cd _seed_db && node seeder.js",
     "backend": "cd backend && node index.js",
+    "newman": "newman run cinema-tests.postman_collection.json",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
