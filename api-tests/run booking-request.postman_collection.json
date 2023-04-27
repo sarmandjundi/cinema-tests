@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "d99c03fd-442d-425b-a0e5-0a306bd3f682",
+		"name": "run booking-request",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24652534"
+	},
+	"item": [
+		{
+			"name": "get free seats",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();",
+							"let occupiedSeats = response[0].occupiedSeats.split(\"' \").map(x => +x);",
+							"let freeSeats =[];",
+							"for (let i = 1; i <= 81; i++){",
+							"    if (!occupiedSeats.includes(i)){freeSeats.push(i);}",
+							"",
+							"}",
+							"",
+							"console.log(occupiedSeats);",
+							"",
+							"pm.environment.set(\"seat1\", freeSeats[0]);",
+							"pm.environment.set(\"seat2\", freeSeats[1]);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/occupied_seats?screeningId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"occupied_seats"
+					],
+					"query": [
+						{
+							"key": "screeningId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create booking",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let initialMockData= {",
+							"    \"bookingNumber\": \"SARM45\",",
+							"    \"screeningId\": 1,",
+							"    \"userId\": 3,",
+							"    \"ticketTypeId\": 3",
+							"}",
+							"",
+							"// set user properties as environement variables",
+							"for(let [key,val] of Object.entries(initialMockData)){",
+							"    pm.environment.set(key,val);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();",
+							"",
+							"// Status code 200 = Ok, no server error",
+							"pm.test('Expect status code 200', () => {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"// affectedRows = rows added in db",
+							"pm.test(\"Check that affected rows is 1\", () => {",
+							"    pm.expect(response.affectedRows).to.equal(1);",
+							"});",
+							"",
+							"// Auto increement id: starts at 1 in SQL",
+							"pm.test(\"Check that insertId is > 0\", () => {",
+							"    pm.expect(response.insertId).to.be.above(0);",
+							"});",
+							"",
+							"pm.environment.set(\"bookingId\", response.insertId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingNumber\": \"{{bookingNumber}}\",\n    \"screeningId\": \"{{screeningId}}\",\n    \"userId\": \"{{userId}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/bookings",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create bookingsXseats",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();",
+							"",
+							"// Status code 200 = Ok, no server error",
+							"pm.test('Expect status code 200', () => {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"// affectedRows = rows added in db",
+							"pm.test(\"Check that affected rows is 1\", () => {",
+							"    pm.expect(response.affectedRows).to.equal(1);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingId\": \"{{bookingId}}\",\n    \"seatId\": \"{{seat1}}\",\n    \"ticketTypeId\": \"{{ticketTypeId}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/bookingsXseats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"bookingsXseats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create bookingsXseats2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();",
+							"",
+							"// Status code 200 = Ok, no server error",
+							"pm.test('Expect status code 200', () => {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"// affectedRows = rows added in db",
+							"pm.test(\"Check that affected rows is 1\", () => {",
+							"    pm.expect(response.affectedRows).to.equal(1);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingId\": \"{{bookingId}}\",\n    \"seatId\": \"{{seat2}}\",\n    \"ticketTypeId\": \"{{ticketTypeId}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/bookingsXseats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"bookingsXseats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"",
+							"// The response from the server",
+							"let response = pm.response.json()[0];",
+							"",
+							"// Status code 200 = Ok, no server error",
+							"pm.test('Expect status code 200', () => {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"// check to correct seats have been booked",
+							"let seat1 = pm.environment.get(\"seat1\");",
+							"let seat2 = pm.environment.get(\"seat2\");",
+							"",
+							"",
+							"pm.test(\"Check that correct seats have been booked\", ()=>{",
+							"    pm.expect(response.seats).to.equal(seat1 + \", \" + seat2);",
+							"})",
+							"",
+							"pm.test(\"Check that correct ticket type has been set\", ()=>{",
+							"    pm.expect(response.ticketTypes).to.equal(\"Adult, Adult\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/api/bookings_overview/?bookingNumber={{bookingNumber}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"bookings_overview",
+						""
+					],
+					"query": [
+						{
+							"key": "bookingNumber",
+							"value": "{{bookingNumber}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check occupied_seats",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json()[0];",
+							"let seat1 = pm.environment.get('seat1');",
+							"let seat2 = pm.environment.get('seat2');",
+							"",
+							"pm.test(\"Check that the correct number of seats have been booked\", () => {",
+							"    pm.expect(response.occupiedSeats).to.include(seat1);",
+							"",
+							"});",
+							"",
+							"",
+							"       "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/occupied_seats/?screeningId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"occupied_seats",
+						""
+					],
+					"query": [
+						{
+							"key": "screeningId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
